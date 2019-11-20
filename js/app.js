@@ -15,10 +15,13 @@ const filterDropDown = document.querySelector('#filter');
 const sortButton = document.querySelector('#sort');
 const tableItem = document.querySelector('#table');
 
-const fillHTMLTable = (tasks) => {
+let tasksFromLocalStorage;
+
+const fillHTMLTable = (filtered = '') => {
   let table = '';
-  if (typeof tasks[0] !== 'undefined') {
-    tasks.forEach(((task) => {
+  const tasksToDisplay = Array.isArray(filtered) ? filtered : tasksFromLocalStorage;
+  if (Array.isArray(tasksToDisplay) && tasksToDisplay.length > 0) {
+    tasksToDisplay.forEach(((task) => {
       const status = task.status ? 'Done' : 'Pending';
       table += `
         <tr>
@@ -52,11 +55,7 @@ const fillHTMLTable = (tasks) => {
   tableItem.innerHTML = table;
 };
 
-/**
- * This function is called once the validations have been passed.
- */
-
-const addTaskItem = (tasks, id) => {
+const addTaskItem = (id) => {
   const date = new Date();
   const taskId = id;
   const description = descriptionInput.value;
@@ -69,24 +68,14 @@ const addTaskItem = (tasks, id) => {
     creationDate: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
     status,
   };
-  tasks.push(newTask);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  tasksFromLocalStorage.push(newTask);
+  localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
   resetButton.click();
-  fillHTMLTable(JSON.parse(localStorage.getItem('tasks')));
+  fillHTMLTable();
   alert('Task has been added');
 };
 
-/**
- * This function is called once the validations have been passed,
- * this function, besides receiving the tasks list it also
- * receives the currentID.
- * It is called from another function triggered once we click the edit button.
- * Pretty much its functionality is to update an existing object.
- * It gets the array without the one we're editing and then re-add it
- * Once the array is saved we will only need to call the
- * fillHTMLTable() function and pass the new array of tasks
- */
-const editTaskItem = (tasks, currentId) => {
+const editTaskItem = (currentId) => {
   const taskToEdit = {
     id: currentId,
     description: descriptionInput.value,
@@ -94,32 +83,28 @@ const editTaskItem = (tasks, currentId) => {
     creationDate: creationDateInput.value,
     status: statusCheckBox.checked,
   };
-  const newTasks = tasks.filter((a) => a.id !== currentId);
-  newTasks.push(taskToEdit);
-  localStorage.setItem('tasks', JSON.stringify(newTasks.sort((a, b) => a.id - b.id)));
+  tasksFromLocalStorage = tasksFromLocalStorage.filter((a) => a.id !== currentId);
+  tasksFromLocalStorage.push(taskToEdit);
+  localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage.sort((a, b) => a.id - b.id)));
   resetButton.click();
   alert('Task was successfully updated');
-  fillHTMLTable(JSON.parse(localStorage.getItem('tasks')));
+  fillHTMLTable();
 };
 
-// Triggered from the remove button in the table
 const removeTaskItem = (id) => {
   if (confirm('Are you sure you want to remove this task?')) {
     setTimeout(() => {
-      const tasks = JSON.parse(localStorage.getItem('tasks'));
-      const index = tasks.findIndex((task) => task.id === id);
-      tasks.splice(index, 1);
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-      fillHTMLTable(tasks);
+      const index = tasksFromLocalStorage.findIndex((task) => task.id === id);
+      tasksFromLocalStorage.splice(index, 1);
+      localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
+      fillHTMLTable();
       alert('The task was successfully removed.');
     }, 1000);
   }
 };
 
-// Triggered from the edit button in the table
 const editTask = (id) => {
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
-  const taskToEdit = tasks.filter((task) => task.id === id)[0];
+  const taskToEdit = tasksFromLocalStorage.filter((task) => task.id === id)[0];
 
   idInput.value = taskToEdit.id;
   descriptionInput.value = taskToEdit.description;
@@ -129,31 +114,25 @@ const editTask = (id) => {
   submitButton.innerText = 'Save changes';
 };
 
-// if the Tasks Item does not exist in the localStorage it will be initialized as empty.
 if (localStorage.getItem('tasks') === null) {
   localStorage.setItem('tasks', JSON.stringify([]));
 }
 
-// The table will be automatically filled once the window loads.
 window.addEventListener('load', () => {
-  fillHTMLTable(JSON.parse(localStorage.getItem('tasks')));
+  tasksFromLocalStorage = JSON.parse(localStorage.getItem('tasks'));
+  fillHTMLTable();
 });
 
-// Event triggered once we try to submit the button
 formItem.addEventListener('submit', (event) => {
   event.preventDefault();
   const errorTextItem = document.querySelector('#itd');
   let lastId = 0;
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
-  /*
-    * Validation before submitting the form.
-    *If the validations are passed, this event will call either the edit or the add function.
-  */
+
   if (descriptionInput.value.trim() === '') {
     descriptionInput.classList.add('is-invalid');
-    errorTextItem.innerHTML = 'Description is a required field.';
+    errorTextItem.innerText = 'Description is a required field.';
   } else if (descriptionInput.value.length > 100) {
-    errorTextItem.innerHTML = 'Description must be 100 characters or less.';
+    errorTextItem.innerText = 'Description must be 100 characters or less.';
     descriptionInput.classList.add('is-invalid');
   } else {
     descriptionInput.classList.remove('is-invalid');
@@ -161,35 +140,32 @@ formItem.addEventListener('submit', (event) => {
     submitButton.setAttribute('disabled', 'true');
     submitButton.innerText = 'Please wait...';
 
-    if (typeof tasks[0] !== 'undefined') {
-      lastId = tasks[tasks.length - 1].id;
+    if (Array.isArray(tasksFromLocalStorage) && tasksFromLocalStorage.length > 0) {
+      lastId = tasksFromLocalStorage[tasksFromLocalStorage.length - 1].id;
     } else {
       lastId = 0;
     }
     const currentId = idInput.value !== '' ? Number(idInput.value) : lastId + 1;
     setTimeout(() => {
       if (document.querySelector('#id').value !== '') {
-        editTaskItem(tasks, currentId);
+        editTaskItem(currentId);
       } else {
-        addTaskItem(tasks, currentId);
+        addTaskItem(currentId);
       }
       submitButton.removeAttribute('disabled');
     }, 2000);
   }
 });
 
-// Besides resetting the form, this button will also remove the error and valid input classes
 resetButton.addEventListener('click', () => {
-  submitButton.innerHTML = 'Create task';
+  submitButton.innerText = 'Create task';
   descriptionInput.classList.remove('is-invalid');
   descriptionInput.classList.remove('is-valid');
 });
 
-// This event will be triggered everytime a key is pressed in order to search by Task Description
 searchInput.addEventListener('keyup', () => {
   const text = searchInput.value.toLowerCase();
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
-  const filtered = tasks.filter((task) => {
+  const filtered = tasksFromLocalStorage.filter((task) => {
     const description = task.description.toLowerCase();
     if (filterDropDown.value !== '') {
       return description.includes(text) && Boolean(Number(filterDropDown.value)) === task.status;
@@ -199,30 +175,23 @@ searchInput.addEventListener('keyup', () => {
   fillHTMLTable(filtered);
 });
 
-/*
-  * Every time we change the value of the filter, the table will only show the records that match it
-  * If the item selected does not have a value, the table will display all records.
-*/
 filterDropDown.addEventListener('change', () => {
-  let tasks = JSON.parse(localStorage.getItem('tasks'));
   const filter = filterDropDown.value;
+  let filteredTasks = [];
   if (filter !== '') {
-    tasks = tasks.filter((task) => task.status === Boolean(Number(filter)));
+    filteredTasks = tasksFromLocalStorage.filter((task) => task.status === Boolean(Number(filter)));
+  } else {
+    filteredTasks = tasksFromLocalStorage;
   }
-  fillHTMLTable(tasks);
+  fillHTMLTable(filteredTasks);
 });
 
-/**
- * The sort button will order the records by creation date either ascending or descending.
- * By default the table is ordered by ID in a descending way.
- */
 sortButton.addEventListener('click', (event) => {
   event.preventDefault();
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
   if (sortButton.getAttribute('href') === '#up') {
     sortButton.innerHTML = '<i class="fa fa-arrow-down"></i>';
     sortButton.setAttribute('href', '#down');
-    tasks.sort((a, b) => {
+    tasksFromLocalStorage.sort((a, b) => {
       if (a.creationDate < b.creationDate) return -1;
       if (a.creationDate > b.creationDate) return 1;
       return 0;
@@ -230,11 +199,11 @@ sortButton.addEventListener('click', (event) => {
   } else {
     sortButton.innerHTML = '<i class="fa fa-arrow-up"></i>';
     sortButton.setAttribute('href', '#up');
-    tasks.sort((a, b) => {
+    tasksFromLocalStorage.sort((a, b) => {
       if (a.creationDate > b.creationDate) return -1;
       if (a.creationDate < b.creationDate) return 1;
       return 0;
     });
   }
-  fillHTMLTable(tasks);
+  fillHTMLTable();
 });

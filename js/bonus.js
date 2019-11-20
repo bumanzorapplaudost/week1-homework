@@ -23,7 +23,8 @@ const calculateBonus = () => {
 
   let aguinaldo = 0;
   if (calculatedResults.years === 0) {
-    aguinaldo = (calculatedResults.salary * calculatedResults.days) / 365;
+    const baseSalary = (Number(salaryInput.value) / 30) * 15;
+    aguinaldo = ((baseSalary * calculatedResults.days) / 365);
   } else if (calculatedResults.years <= 3) {
     aguinaldo = (calculatedResults.salary / 30) * 15;
   } else if (calculatedResults.years <= 10) {
@@ -35,8 +36,10 @@ const calculateBonus = () => {
   const result = `
   <div class="col-sm-12 col-md-4">
     <div class="card">
-      <div id="results" class="card-body bg-light">
-        <h4 class="text-center">Calculo de Aguinaldo</h4>
+      <div class="card-header">
+        <h4>Bonus Results</h4>
+      </div>
+      <div class="card-body bg-light">
         <div class="row">
           <div class="col-sm-6"><b>Base Salary: </b></div>
           <div class="col-sm-6">$${calculatedResults.salary}</div>
@@ -45,7 +48,7 @@ const calculateBonus = () => {
           <div class="col-sm-6"><b>Days Worked: </b></div>
           <div class="col-sm-6">${calculatedResults.days}</div>
           <div class="col-sm-12">&nbsp;</div>
-          <div class="col-sm-6"><h5><b>Aguinaldo:</b></h5></div>
+          <div class="col-sm-6"><h5><b>Bonus:</b></h5></div>
           <div class="col-sm-6"><h5>$${calculatedResults.paidAmount.toFixed(2)}</h5></div>
         </div>
       </div>
@@ -88,7 +91,7 @@ formItem.addEventListener('submit', (event) => {
   if ((daysInput.value === '' || daysInput.value === '0') && (yearsInput.value === '' || yearsInput.value === '0' || Number(yearsInput.value) > 35)) {
     validated = false;
     daysInput.classList.add('is-invalid');
-    daysInvalidFeedback.innerHTML = 'Days must be greater than zero and less than 365';
+    daysInvalidFeedback.innerText = 'Days must be greater than zero and less than 365';
   } else if (Number(daysInput.value) > 365) {
     daysInvalidFeedback.innerHTML = 'Days <b>must</b> be greater than zero and less than 365';
   } else {
