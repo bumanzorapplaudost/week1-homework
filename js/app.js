@@ -1,9 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-restricted-globals */
-// Form
 const formItem = document.querySelector('#taskform');
 
-/* Form Items */
 const idInput = document.querySelector('#id');
 const descriptionInput = document.querySelector('#description');
 const assigneeDropDown = document.querySelector('#assignee');
@@ -12,7 +10,6 @@ const creationDateInput = document.querySelector('#creation_date');
 const submitButton = document.querySelector('#btn_submit');
 const resetButton = document.querySelector('#reset');
 
-// Search and filter Items
 const searchInput = document.querySelector('#search');
 const filterDropDown = document.querySelector('#filter');
 const sortButton = document.querySelector('#sort');
@@ -56,9 +53,7 @@ const fillHTMLTable = (tasks) => {
 };
 
 /**
- * This function is called once the validations have been passed,
- * Pretty much its functionality is create a new Object and add it to the array then save it in the local storage
- * Once the array is saved we will only need to call the fillHTMLTable() function and pass the new array of tasks
+ * This function is called once the validations have been passed.
  */
 
 const addTaskItem = (tasks, id) => {
@@ -83,11 +78,13 @@ const addTaskItem = (tasks, id) => {
 
 /**
  * This function is called once the validations have been passed,
- * this function, besides receiving the tasks list it also receives the currentID.
+ * this function, besides receiving the tasks list it also
+ * receives the currentID.
  * It is called from another function triggered once we click the edit button.
  * Pretty much its functionality is to update an existing object.
  * It gets the array without the one we're editing and then re-add it
- * Once the array is saved we will only need to call the fillHTMLTable() function and pass the new array of tasks
+ * Once the array is saved we will only need to call the
+ * fillHTMLTable() function and pass the new array of tasks
  */
 const editTaskItem = (tasks, currentId) => {
   const taskToEdit = {
@@ -97,7 +94,7 @@ const editTaskItem = (tasks, currentId) => {
     creationDate: creationDateInput.value,
     status: statusCheckBox.checked,
   };
-  const newTasks = tasks.filter((a) => a.id != currentId);
+  const newTasks = tasks.filter((a) => a.id !== currentId);
   newTasks.push(taskToEdit);
   localStorage.setItem('tasks', JSON.stringify(newTasks.sort((a, b) => a.id - b.id)));
   resetButton.click();
@@ -105,6 +102,7 @@ const editTaskItem = (tasks, currentId) => {
   fillHTMLTable(JSON.parse(localStorage.getItem('tasks')));
 };
 
+// Triggered from the remove button in the table
 const removeTaskItem = (id) => {
   if (confirm('Are you sure you want to remove this task?')) {
     setTimeout(() => {
@@ -118,6 +116,7 @@ const removeTaskItem = (id) => {
   }
 };
 
+// Triggered from the edit button in the table
 const editTask = (id) => {
   const tasks = JSON.parse(localStorage.getItem('tasks'));
   const taskToEdit = tasks.filter((task) => task.id === id)[0];
@@ -148,7 +147,7 @@ formItem.addEventListener('submit', (event) => {
   const tasks = JSON.parse(localStorage.getItem('tasks'));
   /*
     * Validation before submitting the form.
-    *If the validations are passed, this event will call either the editTaskItem or the addTaskItem function.
+    *If the validations are passed, this event will call either the edit or the add function.
   */
   if (descriptionInput.value.trim() === '') {
     descriptionInput.classList.add('is-invalid');
@@ -190,19 +189,25 @@ resetButton.addEventListener('click', () => {
 searchInput.addEventListener('keyup', () => {
   const text = searchInput.value.toLowerCase();
   const tasks = JSON.parse(localStorage.getItem('tasks'));
-  const filtered = tasks.filter((task) => task.description.toLowerCase().includes(text));
+  const filtered = tasks.filter((task) => {
+    const description = task.description.toLowerCase();
+    if (filterDropDown.value !== '') {
+      return description.includes(text) && Boolean(Number(filterDropDown.value)) === task.status;
+    }
+    return description.includes(text);
+  });
   fillHTMLTable(filtered);
 });
 
 /*
-  * Every time we change the value of the filter dropdown, the table will only show the records that match it
+  * Every time we change the value of the filter, the table will only show the records that match it
   * If the item selected does not have a value, the table will display all records.
 */
 filterDropDown.addEventListener('change', () => {
   let tasks = JSON.parse(localStorage.getItem('tasks'));
   const filter = filterDropDown.value;
-  if (filter != '') {
-    tasks = tasks.filter((task) => task.status == Number(filter));
+  if (filter !== '') {
+    tasks = tasks.filter((task) => task.status === Boolean(Number(filter)));
   }
   fillHTMLTable(tasks);
 });
@@ -214,7 +219,7 @@ filterDropDown.addEventListener('change', () => {
 sortButton.addEventListener('click', (event) => {
   event.preventDefault();
   const tasks = JSON.parse(localStorage.getItem('tasks'));
-  if (sortButton.getAttribute('href') == '#up') {
+  if (sortButton.getAttribute('href') === '#up') {
     sortButton.innerHTML = '<i class="fa fa-arrow-down"></i>';
     sortButton.setAttribute('href', '#down');
     tasks.sort((a, b) => {

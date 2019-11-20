@@ -1,13 +1,17 @@
+/* eslint-disable no-mixed-operators */
 /* Declare all the constants that are going to be used during this program's execution. */
 const formItem = document.querySelector('#aguinaldo-form');
+
 const salaryInput = document.querySelector('#salary');
 const yearsInput = document.querySelector('#years');
 const daysInput = document.querySelector('#days');
+const resetButton = document.getElementById('reset');
+
 const salaryInvalidFeedback = document.querySelector('#salary_invalid');
 const yearsInvalidFeedback = document.querySelector('#years_invalid');
 const daysInvalidFeedback = document.querySelector('#days_invalid');
+
 const resultsCardItem = document.getElementById('results');
-const resetButton = document.getElementById('reset');
 
 const calculateBonus = () => {
   const calculatedResults = {
