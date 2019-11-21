@@ -151,10 +151,12 @@ formItem.addEventListener('submit', (event) => {
 
   if (nameInput.value.trim() === '') {
     nameInput.classList.add('is-invalid');
-    errorTextItem.innerText = 'name is a required field.';
+    errorTextItem.innerText = 'Name is a required field.';
+    nameInput.focus();
   } else if (nameInput.value.length > 100) {
-    errorTextItem.innerText = 'name must be 100 characters or less.';
+    errorTextItem.innerText = 'Name must be 100 characters or less.';
     nameInput.classList.add('is-invalid');
+    nameInput.focus();
   } else {
     nameInput.classList.remove('is-invalid');
     nameInput.classList.add('is-valid');
@@ -208,19 +210,11 @@ sortButton.addEventListener('click', (event) => {
   if (sortButton.getAttribute('href') === '#up') {
     sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-down"></i>';
     sortButton.setAttribute('href', '#down');
-    tasksToOrder.sort((a, b) => {
-      if (a.creationDate < b.creationDate) return -1;
-      if (a.creationDate > b.creationDate) return 1;
-      return 0;
-    });
+    tasksToOrder.sort((a, b) => new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime());
   } else {
     sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-up"></i>';
     sortButton.setAttribute('href', '#up');
-    tasksToOrder.sort((a, b) => {
-      if (a.creationDate > b.creationDate) return -1;
-      if (a.creationDate < b.creationDate) return 1;
-      return 0;
-    });
+    tasksToOrder.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
   }
   if (filterDropDown.value !== '') {
     fillHTMLTable(tasksToOrder);

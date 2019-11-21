@@ -26,13 +26,3 @@ color: #000;
 text-decoration: none;
 color: #000;
 }
-
-#filter-button {
-border: solid 1px #ccc!important;
-color: #666;
-}
-
-#filter-button:hover, #filter-button:focus {
-color: #fff;
-background-color: #666;
-}
