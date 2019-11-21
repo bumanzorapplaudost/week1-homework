@@ -25,7 +25,16 @@
     [type=tel].form-control:focus, 
     [contenteditable].form-control:focus {
         box-shadow: inset 0 -1px 0 #ddd;
-    }   
+    }
+
+    .a-customized {
+      color: #000;
+    }
+
+    .a-customized:hover, .a-customized:focus {
+      text-decoration: none;
+      color: #000;
+    }
   </style>
   <title>Task Manager</title>
 </head>
@@ -127,7 +136,7 @@
             <th>Task Description</th>
             <th>Assignee</th>
             <th>Status</th>
-            <th class="d-none d-md-block">Creation date <a href="#up" id="sort"><i class="fa fa-arrows-v"></i></a></th>
+            <th class="d-none d-md-block"><a href="#up" class="a-customized" id="sort">Creation date <i class="fa fa-arrows-v"></i></a></th>
             <th>Actions</th>
           </thead>
           <tbody id="table">

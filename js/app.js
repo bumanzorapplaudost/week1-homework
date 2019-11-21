@@ -189,7 +189,7 @@ filterDropDown.addEventListener('change', () => {
 sortButton.addEventListener('click', (event) => {
   event.preventDefault();
   if (sortButton.getAttribute('href') === '#up') {
-    sortButton.innerHTML = '<i class="fa fa-arrow-down"></i>';
+    sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-down"></i>';
     sortButton.setAttribute('href', '#down');
     tasksFromLocalStorage.sort((a, b) => {
       if (a.creationDate < b.creationDate) return -1;
@@ -197,7 +197,7 @@ sortButton.addEventListener('click', (event) => {
       return 0;
     });
   } else {
-    sortButton.innerHTML = '<i class="fa fa-arrow-up"></i>';
+    sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-up"></i>';
     sortButton.setAttribute('href', '#up');
     tasksFromLocalStorage.sort((a, b) => {
       if (a.creationDate > b.creationDate) return -1;
