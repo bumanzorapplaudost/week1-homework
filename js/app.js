@@ -62,11 +62,11 @@ const addTaskItem = (id) => {
   const assignee = assigneeDropDown.value;
   const status = statusCheckBox.checked;
   const newTask = {
-    id: taskId,
     description,
     assignee,
-    creationDate: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
     status,
+    id: taskId,
+    creationDate: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
   };
   tasksFromLocalStorage.push(newTask);
   localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
