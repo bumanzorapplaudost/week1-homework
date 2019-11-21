@@ -1,4 +1,4 @@
-# Week 1 Homework for the Trainee Program at applaudo studios. 
+# Week 1 Homework for the Trainee Program at ApplaudoStudios. 
 
 The project is pretty much self-explainatory. The first part is to create a Task Manager using the `localStorage` in JavaScript. It should add, and validate the form when adding. 
 
