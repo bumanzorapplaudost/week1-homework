@@ -3,7 +3,7 @@
 const formItem = document.querySelector('#taskform');
 
 const idInput = document.querySelector('#id');
-const descriptionInput = document.querySelector('#description');
+const nameInput = document.querySelector('#name');
 const assigneeDropDown = document.querySelector('#assignee');
 const statusCheckBox = document.querySelector('#status');
 const creationDateInput = document.querySelector('#creation_date');
@@ -26,7 +26,7 @@ const fillHTMLTable = (filtered = '') => {
       table += `
         <tr>
           <td class="d-none d-md-block">${task.id}</td>
-          <td>${task.description}</td>
+          <td>${task.name}</td>
           <td>${task.assignee === '' ? 'Unassigned' : task.assignee}</td>
           <td>${status}</td>
           <td class="d-none d-md-block">${task.creationDate}</td>
@@ -58,11 +58,11 @@ const fillHTMLTable = (filtered = '') => {
 const addTaskItem = (id) => {
   const date = new Date();
   const taskId = id;
-  const description = descriptionInput.value;
+  const name = nameInput.value;
   const assignee = assigneeDropDown.value;
   const status = statusCheckBox.checked;
   const newTask = {
-    description,
+    name,
     assignee,
     status,
     id: taskId,
@@ -78,7 +78,7 @@ const addTaskItem = (id) => {
 const editTaskItem = (currentId) => {
   const taskToEdit = {
     id: currentId,
-    description: descriptionInput.value,
+    name: nameInput.value,
     assignee: assigneeDropDown.value,
     creationDate: creationDateInput.value,
     status: statusCheckBox.checked,
@@ -107,7 +107,7 @@ const editTask = (id) => {
   const taskToEdit = tasksFromLocalStorage.filter((task) => task.id === id)[0];
 
   idInput.value = taskToEdit.id;
-  descriptionInput.value = taskToEdit.description;
+  nameInput.value = taskToEdit.name;
   assigneeDropDown.value = taskToEdit.assignee;
   statusCheckBox.checked = taskToEdit.status;
   creationDateInput.value = taskToEdit.creationDate;
@@ -124,8 +124,7 @@ const filterTasks = () => {
   }
 
   return filteredTasks;
-
-}
+};
 
 if (localStorage.getItem('tasks') === null) {
   localStorage.setItem('tasks', JSON.stringify([]));
@@ -141,15 +140,15 @@ formItem.addEventListener('submit', (event) => {
   const errorTextItem = document.querySelector('#itd');
   let lastId = 0;
 
-  if (descriptionInput.value.trim() === '') {
-    descriptionInput.classList.add('is-invalid');
-    errorTextItem.innerText = 'Description is a required field.';
-  } else if (descriptionInput.value.length > 100) {
-    errorTextItem.innerText = 'Description must be 100 characters or less.';
-    descriptionInput.classList.add('is-invalid');
+  if (nameInput.value.trim() === '') {
+    nameInput.classList.add('is-invalid');
+    errorTextItem.innerText = 'name is a required field.';
+  } else if (nameInput.value.length > 100) {
+    errorTextItem.innerText = 'name must be 100 characters or less.';
+    nameInput.classList.add('is-invalid');
   } else {
-    descriptionInput.classList.remove('is-invalid');
-    descriptionInput.classList.add('is-valid');
+    nameInput.classList.remove('is-invalid');
+    nameInput.classList.add('is-valid');
     submitButton.setAttribute('disabled', 'true');
     submitButton.innerText = 'Please wait...';
 
@@ -172,18 +171,18 @@ formItem.addEventListener('submit', (event) => {
 
 resetButton.addEventListener('click', () => {
   submitButton.innerText = 'Create task';
-  descriptionInput.classList.remove('is-invalid');
-  descriptionInput.classList.remove('is-valid');
+  nameInput.classList.remove('is-invalid');
+  nameInput.classList.remove('is-valid');
 });
 
 searchInput.addEventListener('keyup', () => {
   const text = searchInput.value.toLowerCase();
   const filtered = tasksFromLocalStorage.filter((task) => {
-    const description = task.description.toLowerCase();
+    const name = task.name.toLowerCase();
     if (filterDropDown.value !== '') {
-      return description.includes(text) && Boolean(Number(filterDropDown.value)) === task.status;
+      return name.includes(text) && Boolean(Number(filterDropDown.value)) === task.status;
     }
-    return description.includes(text);
+    return name.includes(text);
   });
   fillHTMLTable(filtered);
 });
