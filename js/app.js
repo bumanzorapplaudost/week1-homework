@@ -14,7 +14,7 @@ const searchInput = document.querySelector('#search');
 const filterDropDown = document.querySelector('#filter');
 const sortButton = document.querySelector('#sort');
 const tableItem = document.querySelector('#table');
-const filterButton = document.querySelector('#filter-button');
+const filterResetButton = document.querySelector('#filter-button');
 
 let tasksFromLocalStorage;
 
@@ -223,7 +223,7 @@ sortButton.addEventListener('click', (event) => {
   }
 });
 
-filterButton.addEventListener('click', () => {
+filterResetButton.addEventListener('click', () => {
   filterDropDown.value = '';
   const filteredTasks = filterTasks();
   fillHTMLTable(filteredTasks);
