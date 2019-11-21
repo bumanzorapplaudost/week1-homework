@@ -1,0 +1,38 @@
+body {
+  font-size: 14px!important;
+}
+
+textarea:focus, 
+select.form-control:focus,
+textarea.form-control:focus, 
+input.form-control:focus, 
+input[type=text]:focus, 
+input[type=password]:focus, 
+input[type=email]:focus, 
+input[type=number]:focus, 
+[type=text].form-control:focus, 
+[type=password].form-control:focus, 
+[type=email].form-control:focus, 
+[type=tel].form-control:focus, 
+[contenteditable].form-control:focus {
+  box-shadow: inset 0 -1px 0 #ddd;
+}
+
+.a-customized {
+color: #000;
+}
+
+.a-customized:hover, .a-customized:focus {
+text-decoration: none;
+color: #000;
+}
+
+#filter-button {
+border: solid 1px #ccc!important;
+color: #666;
+}
+
+#filter-button:hover, #filter-button:focus {
+color: #fff;
+background-color: #666;
+}

@@ -14,6 +14,7 @@ const searchInput = document.querySelector('#search');
 const filterDropDown = document.querySelector('#filter');
 const sortButton = document.querySelector('#sort');
 const tableItem = document.querySelector('#table');
+const filterButton = document.querySelector('#filter-button');
 
 let tasksFromLocalStorage;
 
@@ -32,10 +33,10 @@ const fillHTMLTable = (filtered = '') => {
           <td class="d-none d-md-block">${task.creationDate}</td>
           <td>
             <div class="btn-group">
-              <button class="btn btn-sm btn-info" onclick="editTask(${task.id})">
+              <button class="btn btn-sm btn-outline-info" onclick="editTask(${task.id})">
                 <i class="fa fa-pencil"></i>
               </button>
-              <button class="btn btn-sm btn-danger" onclick="removeTaskItem(${task.id})">
+              <button class="btn btn-sm btn-outline-danger" onclick="removeTaskItem(${task.id})">
                 <i class="fa fa-times"></i>
               </button>
             </div>
@@ -66,7 +67,7 @@ const addTaskItem = (id) => {
     assignee,
     status,
     id: taskId,
-    creationDate: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
+    creationDate: `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString()}`,
   };
   tasksFromLocalStorage.push(newTask);
   localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
@@ -115,11 +116,19 @@ const editTask = (id) => {
 };
 
 const filterTasks = () => {
+  const appendForFilter = document.querySelector('#append-for-filter');
+  const inputGroup = document.querySelector('#input-group');
   const filter = filterDropDown.value;
   let filteredTasks = [];
   if (filter !== '') {
+    inputGroup.classList.add('input-group');
+    appendForFilter.classList.add('d-block');
+    appendForFilter.classList.remove('d-none');
     filteredTasks = tasksFromLocalStorage.filter((task) => task.status === Boolean(Number(filter)));
   } else {
+    inputGroup.classList.remove('input-group');
+    appendForFilter.classList.remove('d-block');
+    appendForFilter.classList.add('d-none');
     filteredTasks = tasksFromLocalStorage;
   }
 
@@ -218,4 +227,10 @@ sortButton.addEventListener('click', (event) => {
   } else {
     fillHTMLTable();
   }
+});
+
+filterButton.addEventListener('click', () => {
+  filterDropDown.value = '';
+  const filteredTasks = filterTasks();
+  fillHTMLTable(filteredTasks);
 });
