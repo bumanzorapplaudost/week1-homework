@@ -114,6 +114,19 @@ const editTask = (id) => {
   submitButton.innerText = 'Save changes';
 };
 
+const filterTasks = () => {
+  const filter = filterDropDown.value;
+  let filteredTasks = [];
+  if (filter !== '') {
+    filteredTasks = tasksFromLocalStorage.filter((task) => task.status === Boolean(Number(filter)));
+  } else {
+    filteredTasks = tasksFromLocalStorage;
+  }
+
+  return filteredTasks;
+
+}
+
 if (localStorage.getItem('tasks') === null) {
   localStorage.setItem('tasks', JSON.stringify([]));
 }
@@ -176,22 +189,18 @@ searchInput.addEventListener('keyup', () => {
 });
 
 filterDropDown.addEventListener('change', () => {
-  const filter = filterDropDown.value;
-  let filteredTasks = [];
-  if (filter !== '') {
-    filteredTasks = tasksFromLocalStorage.filter((task) => task.status === Boolean(Number(filter)));
-  } else {
-    filteredTasks = tasksFromLocalStorage;
-  }
+  const filteredTasks = filterTasks();
   fillHTMLTable(filteredTasks);
 });
 
 sortButton.addEventListener('click', (event) => {
   event.preventDefault();
+  const tasksToOrder = filterDropDown.value !== '' ? filterTasks() : tasksFromLocalStorage;
+
   if (sortButton.getAttribute('href') === '#up') {
     sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-down"></i>';
     sortButton.setAttribute('href', '#down');
-    tasksFromLocalStorage.sort((a, b) => {
+    tasksToOrder.sort((a, b) => {
       if (a.creationDate < b.creationDate) return -1;
       if (a.creationDate > b.creationDate) return 1;
       return 0;
@@ -199,11 +208,15 @@ sortButton.addEventListener('click', (event) => {
   } else {
     sortButton.innerHTML = 'Creation date <i class="fa fa-arrow-up"></i>';
     sortButton.setAttribute('href', '#up');
-    tasksFromLocalStorage.sort((a, b) => {
+    tasksToOrder.sort((a, b) => {
       if (a.creationDate > b.creationDate) return -1;
       if (a.creationDate < b.creationDate) return 1;
       return 0;
     });
   }
-  fillHTMLTable();
+  if (filterDropDown.value !== '') {
+    fillHTMLTable(tasksToOrder);
+  } else {
+    fillHTMLTable();
+  }
 });
