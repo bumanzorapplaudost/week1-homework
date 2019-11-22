@@ -40,17 +40,24 @@ const calculateBonus = () => {
         <h4>Bonus Results</h4>
       </div>
       <div class="card-body bg-light">
-        <div class="row">
-          <div class="col-sm-6"><b>Base Salary: </b></div>
-          <div class="col-sm-6">$${calculatedResults.salary}</div>
-          <div class="col-sm-6"><b>Years Worked: </b></div>
-          <div class="col-sm-6">${calculatedResults.years}</div>
-          <div class="col-sm-6"><b>Days Worked: </b></div>
-          <div class="col-sm-6">${calculatedResults.days}</div>
-          <div class="col-sm-12">&nbsp;</div>
-          <div class="col-sm-6"><h5><b>Bonus:</b></h5></div>
-          <div class="col-sm-6"><h5>$${calculatedResults.paidAmount.toFixed(2)}</h5></div>
-        </div>
+        <table class="table table-bordered">
+          <tr>
+            <td class="text-right">Base Salary: </td>
+            <td>$${calculatedResults.salary.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td class="text-right">Years Worked: </td>
+            <td>${calculatedResults.years}</td>
+          </tr>
+          <tr>
+            <td class="text-right">Days Worked: </td>
+            <td>${calculatedResults.days}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><b>Bonus: </b></td>
+            <td><b>$${calculatedResults.paidAmount.toFixed(2)}</b></td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
@@ -92,7 +99,7 @@ formItem.addEventListener('submit', (event) => {
     validated = false;
     daysInput.classList.add('is-invalid');
     daysInvalidFeedback.innerText = 'Days must be greater than zero and less than 365';
-  } else if (Number(daysInput.value) > 365) {
+  } else if (Number(daysInput.value) > 365 || (yearsInput.value > 35 && daysInput.value > 365)) {
     daysInvalidFeedback.innerHTML = 'Days <b>must</b> be greater than zero and less than 365';
   } else {
     validated = true;
@@ -117,8 +124,10 @@ resetButton.addEventListener('click', () => {
   resultsCardItem.classList.add('d-none');
   document.querySelectorAll('.is-invalid').forEach((item) => {
     item.classList.remove('is-invalid');
+    item.removeAttribute('disabled');
   });
   document.querySelectorAll('.is-valid').forEach((item) => {
     item.classList.remove('is-valid');
+    item.removeAttribute('disabled');
   });
 });

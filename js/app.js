@@ -1,6 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-restricted-globals */
 const formItem = document.querySelector('#taskform');
+const alertDisplayer = document.querySelector('.alert-displayer');
 
 const idInput = document.querySelector('#id');
 const nameInput = document.querySelector('#name');
@@ -73,7 +74,10 @@ const addTaskItem = (id) => {
   localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
   resetButton.click();
   fillHTMLTable();
-  alert('Task has been added');
+  alertDisplayer.innerHTML = '<div class="alert alert-success" role="alert">The task was saved! </div>';
+  setTimeout(() => {
+    alertDisplayer.innerHTML = '&nbsp;';
+  }, 2000);
 };
 
 const editTaskItem = (currentId) => {
@@ -88,7 +92,10 @@ const editTaskItem = (currentId) => {
   tasksFromLocalStorage.push(taskToEdit);
   localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage.sort((a, b) => a.id - b.id)));
   resetButton.click();
-  alert('Task was successfully updated');
+  alertDisplayer.innerHTML = '<div class="alert alert-info" role="alert">The task was successfully updated! </div>';
+  setTimeout(() => {
+    alertDisplayer.innerHTML = '&nbsp;';
+  }, 2000);
   fillHTMLTable();
 };
 
@@ -99,7 +106,10 @@ const removeTaskItem = (id) => {
       tasksFromLocalStorage.splice(index, 1);
       localStorage.setItem('tasks', JSON.stringify(tasksFromLocalStorage));
       fillHTMLTable();
-      alert('The task was successfully removed.');
+      alertDisplayer.innerHTML = '<div class="alert alert-success" role="alert">The task was successfully removed! </div>';
+      setTimeout(() => {
+        alertDisplayer.innerHTML = '&nbsp;';
+      }, 2000);
     }, 1000);
   }
 };
